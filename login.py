@@ -4,7 +4,7 @@ from PIL import Image, ImageTk
 from tkinter import ttk
 import os
 from   Datos.ConectorMysql   import Cursor
-from MenuView import CrearMenu as m
+from MenuView import CrearMenu as Menuvie
 import getpass
 
 
@@ -35,7 +35,7 @@ class LoginView(Frame):
             result=Cursor.Query(f"SELECT idusuario FROM wisemendb_saller.usuario where usuario.usuario='{usuario.get()}'and password='{password.get()}'")
             if result is not None:
                 MensajeBox.showinfo("Mensaje","Usuario comprobado con exito")
-                m.funcion()
+                Menuvie.funcion()
                 root.withdraw()
             else:
                 MensajeBox.showerror("Error","Usuario no registrado")
@@ -46,7 +46,10 @@ class LoginView(Frame):
             def MostrarPassword():
                 ver=control.get()
                 if ver==0:
-                    getpass.getpass(textopassword)
+                    textopassword.config(show="")
+                else:
+                    textopassword.config(show="*")
+
             frame.config(background="#958235")
             frame.pack(side="left",expand=True,fill=BOTH)
             Label(frame,text="Usuario",background="#958235",fg="white",font=("ventana",24)).pack()
