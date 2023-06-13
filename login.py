@@ -5,7 +5,7 @@ from tkinter import ttk
 import os
 from   Datos.ConectorMysql   import Cursor
 from MenuView import CrearMenu as Menuvie
-import getpass
+
 
 
 root=Tk()
@@ -16,7 +16,7 @@ root.config(relief="solid")
 root.config(background="#958235")
 root.resizable(0,0)
 imgusuario = ImageTk.PhotoImage(Image.open(os.path.join("./IMG/", "image.png")).resize((500,325)))
-Label(root,image=  imgusuario,background="#958235").pack()
+Label(root,image=imgusuario,background="#958235").pack()
 
 
 class LoginView(Frame):

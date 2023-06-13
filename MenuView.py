@@ -6,17 +6,12 @@ from FrameMenu import VentanaRedimencionar as Ventana
 from ClienteView import ClienteView as Clientesvi
 
 
-class CrearMenu():
-    clientes=Clientesvi()
-    def __init__(self,Master=None,cliente=None):
-          self.Master.__init__(self,Master=None)
-          self.cliente.__init__(self,Clientesvi)
-          
-          
 
-          def otra():
-              Clientesvi.funcion()
- 
+
+
+
+
+class CrearMenu():
     def funcion():
              win=Toplevel()
              win.title("Menu PRINCIPAL")
@@ -28,7 +23,7 @@ class CrearMenu():
              win.config(menu=menubar)
 
              filemenu = Menu(menubar, tearoff=0)
-             filemenu.add_command(label="Cliente",command="")
+             filemenu.add_command(label="Clientes",command=lambda:Clientesvi.funcion())
              filemenu.add_command(label="Abrir")
              filemenu.add_command(label="Guardar")
              filemenu.add_command(label="Cerrar")
