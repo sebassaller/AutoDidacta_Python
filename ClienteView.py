@@ -5,17 +5,19 @@ from tkinter import filedialog as FileBox
 from FrameMenu import VentanaRedimencionar as Ventana
 from Datos.ConectorMysql   import Cursor
 from tkinter import ttk
-from PIL import Image, ImageTk
+from ABMCliente import ABMClientes
 
 
 
 
 
-def LoadClientes():
-            result=Cursor.Query(queryLoad,True)
-            return result
+def LoadClientes(query,valorbool):
+          return  Cursor.Query(query,valorbool)
+
 class ClienteView():
     global queryLoad
+    global selectitem
+   
     queryLoad="SELECT Idcliente,Nombre,Apellido,Dni,Telefono,Ge.texto,Em.email,Dire.direccion,Dire.CP,Pro.texto as Provincia,Loca.texto as Localidad,Habilitado FROM wisemendb_saller.clientes as CLi inner join genero  as Ge on CLi.idGenero=Ge.id inner join email as Em on CLi.idEmail=Em.idemail inner join direccion as Dire on CLi.idDireccion=Dire.idDireccion inner join provinciaswise as Pro on Dire.idProvincia=Pro.id inner join localidadeswise as Loca on Dire.idLocalidad=Loca.id ;"
     def funcion():
             win=Toplevel()
@@ -26,14 +28,17 @@ class ClienteView():
 
             menubar = Menu(win)
             win.config(menu=menubar)
-
+            selectitem=StringVar()
             label=Label(win)#image=imagen#)
             label.pack(anchor="center")
             label.config(fg="#217434", bg="#518CAD",font=("Comic Sans MS",24,"bold"),text="pantalla Cliente")
             frameboton=Frame(win)
             def Seleccion():
                 item=tree.selection()[0]
-                selectitem=tree.item(item)['text']
+                selectitem=tree.item(item)#['text']
+                id=int(selectitem['text'])
+                ABMClientes.funcion(f"{selectitem['values'][1]},  {selectitem['values'][2]}",id)
+                print(selectitem)
                 
                
      
@@ -56,7 +61,7 @@ class ClienteView():
             filemenu.add_command(label="Cerrar")
             filemenu.add_separator()
             filemenu.add_command(label="Salir", command=win.quit)
-            tabla=LoadClientes()
+            tabla=LoadClientes(queryLoad,True)
             s = ttk.Style()
             s.theme_use('clam')
             
