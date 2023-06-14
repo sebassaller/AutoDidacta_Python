@@ -31,15 +31,20 @@ class ClienteView():
             label.pack(anchor="center")
             label.config(fg="#217434", bg="#518CAD",font=("Comic Sans MS",24,"bold"),text="pantalla Cliente")
             frameboton=Frame(win)
-       
+            def Seleccion():
+                item=tree.selection()[0]
+                selectitem=tree.item(item)['text']
+                
+               
+     
             botonnuevocliente = ttk.Button(frameboton,text="Nuevo Cliente")
-            botonnuevocliente.place(bordermode=OUTSIDE, height=40, width=40, y=70)
+
             botonnuevocliente.pack()
             botoneditarcliente = ttk.Button(frameboton,text="Editar Cliente")
             botoneditarcliente.pack(anchor='w')
             botonEliminarcliente= ttk.Button(frameboton,text="Eliminar Cliente")
             botonEliminarcliente.pack()
-            botonseleccionarcliente= ttk.Button(frameboton,text="Seleccionar Cliente")
+            botonseleccionarcliente= ttk.Button(frameboton,text="Seleccionar Cliente",command=Seleccion)
             botonseleccionarcliente.pack()
             frameboton.config(bg="red")
             frameboton.pack(fill=BOTH,expand=20)
@@ -61,10 +66,11 @@ class ClienteView():
             colubnas=("IdCliente", "Nombre", "Apellido", "DNI","Telefono","Genero","Email","Direccion","CP","Provincia","Localidad","Habilitado")
             h.pack(side = BOTTOM, fill = X)
             tree = ttk.Treeview(frame, column=colubnas, show='headings', height=5)
+           
             contador=0
             for item in list(colubnas):
                 print(item,item.index)
-                tree.column(str(contador), anchor=CENTER)
+                tree.column(f'#{str(contador)}', anchor=CENTER)
                 tree.heading(str(contador), text=str(item))
                 contador +=1
 
@@ -81,7 +87,7 @@ class ClienteView():
                 print(items)
                 tree.insert('', 'end', text=str(items[00]), values=(str(items[00]),str(items[1]),str(items[2]),str(items[3]),str(items[4]),str(items[5]),str(items[6]),str(items[7]),str(items[8]),str(items[9]),str(items[10]),habilitado(int(items[11]))))
             
-            
+           
            
             tree.pack()
             frame.pack()
