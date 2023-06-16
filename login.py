@@ -60,7 +60,7 @@ class LoginView(Frame):
             textopassword=ttk.Entry(frame,textvariable=password,font=("ventana",20),show="*")
             textopassword.pack()
             Label(frame,text=" ",background="#958235").pack()
-            Checkbutton(frame, text="ver", onvalue=1, offvalue=0,background="#958235",variable=control,font=("ventana",15),fg="white",command=MostrarPassword).pack(anchor="w",expand=True,side=TOP,fill=BOTH)
+            Checkbutton(frame, text="ver", onvalue=1, offvalue=0,background="#958235",variable=control,font=("ventana",15),fg="white",command=locals()['MostrarPassword'] ).pack(anchor="w",expand=True,side=TOP,fill=BOTH)
             Label(frame,text=" ",background="#958235").pack()
             Button(frame,text="inicio",width=10,height=10,font=("ventana",15),command=LoginCursor).pack(expand=True)
             Label(frame,text=" ",background="#958235").pack()

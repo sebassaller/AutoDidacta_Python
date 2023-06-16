@@ -10,7 +10,9 @@ def EditarCliente(id):
       print(result)
 
 
+
 class ABMClientes():
+   
 
     def funcion(cliente,id=0):
              win=Toplevel()
@@ -42,20 +44,26 @@ class ABMClientes():
              menubar.add_cascade(label="Archivo", menu=filemenu)
              menubar.add_cascade(label="Editar", menu=editmenu)
              menubar.add_cascade(label="Ayuda", menu=helpmenu)
+             def TraerLocalidad():
+               idprovincia=[item for item in list(Cursor.Query(f"SELECT id FROM wisemendb_saller.provinciaswise where texto='{comboProvincias.get()}'"))]
+               print(idprovincia)
+               Listalocalidad=[item for item in list(Cursor.Query(f"SELECT * FROM wisemendb_saller.localidadeswise where idprovincia={idprovincia[0]}",True))]
+               print(Listalocalidad)
 
              framadatosabm=Frame(win)
              Label(framadatosabm, text='Nombre').grid(row=0,column=0)
              Label(framadatosabm, text='Apellido').grid(row=0,column=1)
              Label(framadatosabm, text='Dni').grid(row=0,column=2)
              Label(framadatosabm, text='Telefono').grid(row=0,column=3)
+
              Label(framadatosabm, text='Provincias').grid(row=2,column=0)
              Label(framadatosabm, text='Localidad').grid(row=2,column=1)
              Label(framadatosabm, text='Genero').grid(row=2,column=2)
-             Label(framadatosabm, text='Direccion').grid(row=4,column=0)
-
-             Label(framadatosabm, text='Numero').grid(row=4,column=1)
-             Label(framadatosabm, text='Piso').grid(row=4,column=2)
-             Label(framadatosabm, text='CP').grid(row=4,column=3)
+             
+             Label(framadatosabm, text='Direccion').grid(row=5,column=0)
+             Label(framadatosabm, text='Numero').grid(row=5,column=1)
+             Label(framadatosabm, text='Piso').grid(row=5,column=2)
+             Label(framadatosabm, text='CP').grid(row=5,column=3)
              TextoNombre = Entry(framadatosabm)
              TextoApellido = Entry(framadatosabm)
              TextoDni = Entry(framadatosabm)
@@ -69,17 +77,18 @@ class ABMClientes():
              TextoApellido.grid(row=1, column=1)
              TextoDni.grid(row=1, column=2)
              TextoTelefono.grid(row=1, column=3)
-             TxtoDireccion.grid(row=5,column=0)
+             TxtoDireccion.grid(row=6,column=0)
 
-             Txtonumero.grid(row=5,column=1)
-             Txtopiso.grid(row=5,column=2)
-             Textocp.grid(row=5,column=3)
-
-             comboProvincias = ttk.Combobox(framadatosabm,values=["Python", "C", "C++", "Java"],width=17)
+             Txtonumero.grid(row=6,column=1)
+             Txtopiso.grid(row=6,column=2)
+             Textocp.grid(row=6,column=3)
+             listaProvincia=[item for (n,item) in list(Cursor.Query("SELECT * FROM wisemendb_saller.provinciaswise",True))]
+             comboProvincias = ttk.Combobox(framadatosabm,values=listaProvincia,width=17)
              comboProvincias.current(0)
              comboProvincias.grid(row=3,column=0,sticky=W)
+             Button(framadatosabm,text="seleccionar Provincia",bg='gold',command=locals()['TraerLocalidad'] ).grid(row=4,column=0)
 
-             comboLocalidad = ttk.Combobox(framadatosabm,values=["Python", "C", "C++", "Java"],width=17)
+             comboLocalidad = ttk.Combobox(framadatosabm,values=["Masculino", "Femenino", "Otro"],width=17)
              comboLocalidad.current(0)
              comboLocalidad.grid(row=3,column=1,sticky=W)
 
