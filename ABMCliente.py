@@ -1,6 +1,8 @@
 from FrameMenu import VentanaRedimencionar as Ventana
 from tkinter import ttk
 from Datos.ConectorMysql   import Cursor
+from Datos.DatosClientes import DatosClientes as DatoCliente
+from Datos.DatosProvinciaYLocalidad import SeachProvinciaLocalidad as seachubucacion
 from tkinter import *
 
 
@@ -10,11 +12,29 @@ def EditarCliente(id):
       print(result)
 
 
+def ubicacion(pro,lo):
+   ubuca=seachubucacion(pro,lo)
+   return ubuca.ReturnIdProviniciaIdLocalidad()
+
+
 
 class ABMClientes():
+
+
    
 
     def funcion(cliente,id=0):
+             global Direccion
+             global numero
+
+             global CodigoPostal
+             global Piso
+             Direccion=StringVar()
+             numero=IntVar()
+
+             CodigoPostal=IntVar()
+             Piso=StringVar()
+       
              win=Toplevel()
              win.title(f"Cliente {cliente} ")
              win.geometry("1000x500")
@@ -50,6 +70,13 @@ class ABMClientes():
                Listalocalidad=[item for item in list(Cursor.Query(f"SELECT * FROM wisemendb_saller.localidadeswise where idprovincia={idprovincia[0]}",True))]
                comboLocalidad['values']=['']
                comboLocalidad['values']=[item[2] for item in list(Listalocalidad)]
+             def EnviarDatosCliente():
+                  SendDatos={'Direccion':[Direccion.get(),numero.get(),Piso.get(),CodigoPostal.get() ]}
+                  print(SendDatos['Direccion'])
+                  result=ubicacion(comboProvincias.get(),comboLocalidad.get())
+                  print(result)
+                  cli=DatoCliente(True,Direccion.get(),numero.get(),result['idprovincia'][0],result['idlocalidad'][0],CodigoPostal.get(),Piso.get())
+                  cli.Accion()
                
 
              framadatosabm=Frame(win)
@@ -77,10 +104,12 @@ class ABMClientes():
              TextoApellido = Entry(framadatosabm)
              TextoDni = Entry(framadatosabm)
              TextoTelefono = Entry(framadatosabm)
-             TxtoDireccion = Entry(framadatosabm)
-             Txtonumero = Entry(framadatosabm)
-             Txtopiso = Entry(framadatosabm)
-             Textocp = Entry(framadatosabm)
+
+             TxtoDireccion = Entry(framadatosabm,textvariable=Direccion)
+             Txtonumero = Entry(framadatosabm,textvariable=numero)
+             Txtopiso = Entry(framadatosabm,textvariable=Piso)
+             Textocp = Entry(framadatosabm,textvariable=CodigoPostal)
+             
              TextoEmail = Entry(framadatosabm)
              TextoUrl = Entry(framadatosabm)
              
@@ -116,8 +145,7 @@ class ABMClientes():
              comboemail .grid(row=8,column=1,sticky=W)
 
 
-
-             Button(framadatosabm,text="Guardar",bg='SteelBlue1',command="" ).grid(row=9,column=1)
+             Button(framadatosabm,text="Guardar",bg='SteelBlue1',command=locals()['EnviarDatosCliente']).grid(row=9,column=1)
              Button(framadatosabm,text="Cancelar",bg='Khaki',command="" ).grid(row=9,column=2)
              #combo.place(x=150, y=150)
 

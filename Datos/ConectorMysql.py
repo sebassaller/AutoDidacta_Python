@@ -25,3 +25,5 @@ class Cursor():
         finally:
             if connectio.is_connected():
                connectio.close()
+
+        
