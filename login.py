@@ -66,8 +66,12 @@ class LoginView(Frame):
             Label(frame,text=" ",background="#958235").pack()
         
         CrearFormulario(self)
-       
-
+#python login.py -v colocando este comando en la consola  e importando en el main la libreria podemos  hacer las pruebas test
+#python -m pydoc -w ConectorMysql .\ este es el comando para generar la documentacion dependiendo la version de python que tenga
+if __name__=="__main__":
+    import doctest
+    doctest.testmod()
 e = LoginView(root)
 e.pack(fill=BOTH, expand=YES)
 root.mainloop()
+

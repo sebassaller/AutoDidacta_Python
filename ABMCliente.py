@@ -19,10 +19,6 @@ def ubicacion(pro,lo):
 
 
 class ABMClientes():
-
-
-   
-
     def funcion(cliente,id=0):
              global Direccion
              global numero
