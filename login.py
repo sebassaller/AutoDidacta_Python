@@ -31,8 +31,9 @@ class LoginView(Frame):
         def LoginCursor():
             if usuario.get()=="" or password.get()=="":
                 return MensajeBox.showwarning("Datos incompletyos","Usuarop o contraseña vacios")
-
-            result=Cursor.Query(f"SELECT idusuario FROM wisemendb_saller.usuario where usuario.usuario='{usuario.get()}'and password='{password.get()}'")
+            
+            login=Cursor()
+            result=login.Query(f"SELECT idusuario FROM wisemendb_saller.usuario where usuario.usuario='{usuario.get()}'and password='{password.get()}'")
             if result is not None:
                 MensajeBox.showinfo("Mensaje","Usuario comprobado con exito")
                 Menuvie.funcion()

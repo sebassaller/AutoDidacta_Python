@@ -12,7 +12,10 @@ from ABMCliente import ABMClientes
 
 
 def LoadClientes(query,valorbool):
-          return  Cursor.Query(query,valorbool)
+          cursor=Cursor()
+          
+          result=cursor.Query(query,valorbool)
+          return result 
 
 class ClienteView():
     global queryLoad
@@ -37,7 +40,10 @@ class ClienteView():
                 item=tree.selection()[0]
                 selectitem=tree.item(item)#['text']
                 id=int(selectitem['text'])
-                ABMClientes.funcion(f"{selectitem['values'][1]},  {selectitem['values'][2]}",id)
+                client=f"{selectitem['values'][1]}-{selectitem['values'][2]}"
+                abmcliente=ABMClientes(client,id)
+                
+                abmcliente.funcion()
                 print(selectitem)
                 
                

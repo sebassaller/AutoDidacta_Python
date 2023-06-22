@@ -12,10 +12,11 @@ class DatosDireccion:
     def MetodoAccion(self):
             if self.Accion==True:
                 print("es verdadero asi que va a agregar")
-                query=f"INSERT INTO direccion (direccion,numero,idProvincia,idLocalidad,CP,piso)VALUES ('{self.direccion}',{self.numero},{self.idprovincia},{self.idlocalidad},{self.cp},'{self.piso}')"
+                query=f"INSERT INTO wisemendb_saller.direccion (direccion,numero,idProvincia,idLocalidad,CP,piso)VALUES ('{self.direccion}',{self.numero},{self.idprovincia},{self.idlocalidad},{self.cp},'{self.piso}');"
                 print(query)
-
-                #result=Cursor.Query()
+                cursa=Cursor()
+                result=cursa.insertar(query)
+                return result
             else:
                 print("Es falso asi que va a editar")
  
