@@ -4,12 +4,16 @@ from Datos.ConectorMysql   import Cursor
 from Datos.DatosClientes import DatosClientes as DatoCliente
 from Datos.DatosProvinciaYLocalidad import SeachProvinciaLocalidad as seachubucacion
 from Datos.DatosDireccion import DatosDireccion as Direccion
+from Datos.DatosEmail import DatosEmail as Email
 from tkinter import *
 
 
 def EditarCliente(id):
       query=f"SELECT * FROM wisemendb_saller.clientes where Idcliente={id}"
-      result=Cursor.Query(query)
+      cursor=Cursor()
+      result=cursor.Query(query)
+      cursor.connectio.close()
+      cursor.cursor.close()
       print(result)
 
 
@@ -29,12 +33,14 @@ class ABMClientes:
              global numero
              global CodigoPostal
              global Piso
+             global email
+
+
+             email=StringVar()
              direccion=StringVar()
              numero=IntVar()
-
              CodigoPostal=IntVar()
              Piso=StringVar()
-       
              win=Toplevel()
              win.title(f"Cliente {self.cliente} ")
              win.geometry("1000x500")
@@ -65,20 +71,25 @@ class ABMClientes:
              menubar.add_cascade(label="Archivo", menu=filemenu)
              menubar.add_cascade(label="Editar", menu=editmenu)
              menubar.add_cascade(label="Ayuda", menu=helpmenu)
+         
              def TraerLocalidad():
                cura=Cursor()
                idprovincia=[item for item in list(cura.Query(f"SELECT id FROM wisemendb_saller.provinciaswise where texto='{comboProvincias.get()}'"))]
-               cu=Cursor()
-               Listalocalidad=[item for item in list(cu.Query(f"SELECT * FROM wisemendb_saller.localidadeswise where idprovincia={idprovincia[0]}",True))]
+               Listalocalidad=[item for item in list(cura.Query(f"SELECT * FROM wisemendb_saller.localidadeswise where idprovincia={idprovincia[0]}",True))]
                comboLocalidad['values']=['']
                comboLocalidad['values']=[item[2] for item in list(Listalocalidad)]
+               cura.connectio.close()
+               cura.cursor.close()
+
              def EnviarDatosCliente():
-                  SendDatos={'Direccion':[direccion.get(),numero.get(),Piso.get(),CodigoPostal.get() ]}
-                  print(SendDatos['Direccion'])
-                  result=ubicacion(comboProvincias.get(),comboLocalidad.get())
-                  print(result)
-                  Direc=Direccion(True,direccion.get(),numero.get(),result['idprovincia'][0],result['idlocalidad'][0],CodigoPostal.get(),Piso.get())
-                  Direc.MetodoAccion()
+                  idprovinciaylocalidad=ubicacion(comboProvincias.get(),comboLocalidad.get())
+                  Direc=Direccion(True,direccion.get(),numero.get(),idprovinciaylocalidad['idprovincia'][0],idprovinciaylocalidad['idlocalidad'][0],CodigoPostal.get(),Piso.get())
+                  iddireccion=Direc.MetodoAccion()
+                  emailarmado=email.get()+comboemail.get()
+                  instanciaemail=Email(True,emailarmado,1)
+                  resulemail=instanciaemail.MetodoAccion()
+
+
                   #cli=DatoCliente(True,Direccion.get(),numero.get(),result['idprovincia'][0],result['idlocalidad'][0],CodigoPostal.get(),Piso.get())
                   #cli.Accion()
                
@@ -114,7 +125,7 @@ class ABMClientes:
              Txtopiso = Entry(framadatosabm,textvariable=Piso)
              Textocp = Entry(framadatosabm,textvariable=CodigoPostal)
              
-             TextoEmail = Entry(framadatosabm)
+             TextoEmail = Entry(framadatosabm,textvariable=email)
              TextoUrl = Entry(framadatosabm)
              
              TextoNombre.grid(row=1, column=0)
@@ -139,16 +150,16 @@ class ABMClientes:
              comboLocalidad = ttk.Combobox(framadatosabm,values=[""],width=17)
              comboLocalidad.current(0)
              comboLocalidad.grid(row=3,column=1,sticky=W)
-             cur=Cursor()
+             #cur=Cursor()
 
             
             
-             combogenero = ttk.Combobox(framadatosabm,values=[item for (n,item) in list(cur.Query("SELECT * FROM wisemendb_saller.genero",True))],width=17)
+             combogenero = ttk.Combobox(framadatosabm,values=[item for (n,item) in list(self.cursor.Query("SELECT * FROM wisemendb_saller.genero",True))],width=17)
              combogenero.current(0)
              combogenero.grid(row=3,column=2,sticky=W)
 
-             cura=Cursor()
-             comboemail = ttk.Combobox(framadatosabm,values=[item for (n,item) in list(cura.Query("SELECT * FROM wisemendb_saller.tiposdecorreos",True))],width=17)
+             #cura=Cursor()
+             comboemail = ttk.Combobox(framadatosabm,values=[item for (n,item) in list(self.cursor.Query("SELECT * FROM wisemendb_saller.tiposdecorreos",True))],width=17)
              comboemail .current(0)
              comboemail .grid(row=8,column=1,sticky=W)
 
@@ -156,6 +167,8 @@ class ABMClientes:
              Button(framadatosabm,text="Guardar",bg='SteelBlue1',command=locals()['EnviarDatosCliente']).grid(row=9,column=1)
              Button(framadatosabm,text="Cancelar",bg='Khaki',command="" ).grid(row=9,column=2)
              #combo.place(x=150, y=150)
+             self.cursor.connectio.close()
+             self.cursor.cursor.close()
 
              framadatosabm.grid(row=0,column=1)
              framadatosabm.pack()
