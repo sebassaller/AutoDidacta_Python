@@ -12,9 +12,10 @@ class DatosClientes():
         self.IdURL=IdURL
         self.Idgenero=IdGenero
         self.Habilitado=Habilitado
+        self.cursor=Cursor()
 
 
-        
+
 
 
     #def Accion(self):

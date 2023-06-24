@@ -48,10 +48,9 @@ class LoginView(Frame):
         def CrearFormulario(frame):
             def MostrarPassword():
                 ver=control.get()
-                if ver==0:
-                    textopassword.config(show="")
-                else:
-                    textopassword.config(show="*")
+                textopassword.config(show="") if ver==0 else textopassword.config(show="*")
+
+
 
             frame.config(background="#958235")
             frame.pack(side="left",expand=True,fill=BOTH)
