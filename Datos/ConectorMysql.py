@@ -32,6 +32,11 @@ class Cursor():
             except Exception as ex:
               return  str(ex)
 
+    def CloseCursor(self):
+        self.connectio.close()
+        self.cursor.close()
+
+
 
 
 

@@ -41,9 +41,9 @@ class ClienteView():
                 selectitem=tree.item(item)#['text']
                 id=int(selectitem['text'])
                 client=f"{selectitem['values'][1]}-{selectitem['values'][2]}"
-                abmcliente=ABMClientes(client,id)
+                ABMClientes(client,id)
                 
-                abmcliente.funcion()
+                #abmcliente.funcion()
                 print(selectitem)
                 
                
@@ -98,8 +98,9 @@ class ClienteView():
                 print(items)
                 tree.insert('', 'end', text=str(items[00]), values=(str(items[00]),str(items[1]),str(items[2]),str(items[3]),str(items[4]),str(items[5]),str(items[6]),str(items[7]),str(items[8]),str(items[9]),str(items[10]),habilitado(int(items[11]))))
             
-           
-           
+            scrollbar=Scrollbar(frame)
+            scrollbar.pack(side=RIGHT,fill=Y)
+            tree['yscrollcommand']=scrollbar.set
             tree.pack()
             frame.pack()
             #vent = Ventana(win)

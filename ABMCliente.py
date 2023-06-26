@@ -2,7 +2,7 @@ from FrameMenu import VentanaRedimencionar as Ventana
 from tkinter import ttk
 from Datos.ConectorMysql   import Cursor
 from Datos.DatosClientes import DatosClientes as Cliente
-from Datos.DatosProvinciaYLocalidad import SeachProvinciaLocalidad as seachubucacion
+from Datos.DatosCombos import SeachCombos as TraerIdCombos
 from Datos.DatosDireccion import DatosDireccion as Direccion
 from Datos.DatosEmail import DatosEmail as Email
 from Datos.DatosURL import DatosURL as URL
@@ -17,11 +17,13 @@ def EditarCliente(id):
       print(result)
 
 
-def ubicacion(provincia,localidad,genero=None):
-   ubuca=seachubucacion(provincia,localidad)
-   idubicacion=ubuca.ReturnIdProviniciaIdLocalidad()
-   idgenero=ubuca.ReturnIDCombosGenero(genero)
-   return (idubicacion,idgenero) if genero is not None else idubicacion
+def Idcombos(provincia,localidad,genero,redsocial):
+   IdCombos=TraerIdCombos()
+
+   idubicacion=IdCombos.ReturnIdProviniciaIdLocalidad(provincia,localidad)
+   idgenero=IdCombos.ReturnIDCombosGenero(genero)
+   idRedsocial=IdCombos.ReturnIdRedSocial(redsocial)
+   return (idubicacion,idgenero,idRedsocial)
 
 
 
@@ -31,6 +33,15 @@ class ABMClientes:
             self.cliente=cliente
             self.idcliente=idcliente
             self.cursor=Cursor()
+            self.win=Toplevel()
+            self.win.title(f"Cliente {cliente} ")
+            self.win.resizable(0,0)
+            self.win.geometry("600x400")
+            self.win.config(relief="solid")
+            self.win.config(background="#958235")
+            self.funcion()
+
+
       def funcion(self):
              global direccion
              global numero
@@ -38,6 +49,15 @@ class ABMClientes:
              global Piso
              global email
              global textoURL
+             global nombre
+             global apellido
+             global DNIcliente
+             global telefono
+
+             nombre=StringVar()
+             apellido=StringVar()
+             DNIcliente=StringVar()
+             telefono=StringVar()
 
              textoURL=StringVar()
              email=StringVar()
@@ -45,14 +65,10 @@ class ABMClientes:
              numero=IntVar()
              CodigoPostal=IntVar()
              Piso=StringVar()
-             win=Toplevel()
-             win.title(f"Cliente {self.cliente} ")
-             win.geometry("1000x500")
-             win.config(relief="solid")
-             win.config(background="#958235")
+           
 
-             menubar = Menu(win)
-             win.config(menu=menubar)
+             menubar = Menu(self.win)
+             self.win.config(menu=menubar)
              menuarchivo=["Clientes","Abrir","Guardar","Cerrar"]
              menueditar=("Cortar","Copiar","Pegar")
             
@@ -61,7 +77,7 @@ class ABMClientes:
              for menuarchi in list(menuarchivo):
                 filemenu.add_command(label=str(menuarchi),command="")
              filemenu.add_separator()
-             filemenu.add_command(label="Salir", command=win.quit)
+             filemenu.add_command(label="Salir", command=self.win.quit)
 
              editmenu = Menu(menubar, tearoff=0)
              for menuedi in list(menueditar):
@@ -86,23 +102,20 @@ class ABMClientes:
                cura.cursor.close()
 
              def EnviarDatosCliente():
-                  idprovinciaylocalidad=ubicacion(comboProvincias.get(),comboLocalidad.get(),combogenero.get())
-                  Direc=Direccion(True,direccion.get(),numero.get(),idprovinciaylocalidad[0]['idprovincia'][0],idprovinciaylocalidad[0]['idlocalidad'][0],CodigoPostal.get(),Piso.get())
+                  combosid= Idcombos(comboProvincias.get(),comboLocalidad.get(),combogenero.get(),comboredsocial.get())
+                  Direc=Direccion(True,direccion.get(),numero.get(),combosid[0]['idprovincia'][0],combosid[0]['idlocalidad'][0],CodigoPostal.get(),Piso.get())
                   iddireccion=Direc.MetodoAccion()
                   emailarmado=email.get()+comboemail.get()
                   instanciaemail=Email(True,emailarmado,1)
                   resulemail=instanciaemail.MetodoAccion()
-                  cura=Cursor()
-                  idcomboredsolical=cura.Query(f"SELECT id  FROM wisemendb_saller.redsocial where texto='{comboredsocial.get()}';")
-                  url=URL(textoURL,idcomboredsolical[0])
+
+                  url=URL(textoURL.get(),combosid[2]['idRedsocial'][0])
                   idUrl=url.MetodoAccion(True)
-
-
-                  #cli=DatoCliente(True,Direccion.get(),numero.get(),result['idprovincia'][0],result['idlocalidad'][0],CodigoPostal.get(),Piso.get())
-                  #cli.Accion()
+                  cli=Cliente(nombre.get(),apellido.get(),DNIcliente.get(),resulemail,iddireccion,idUrl,combosid[1]['idgenero'][0],telefono.get())
+                  cli.MetodoAccion(True)
                
 
-             framadatosabm=Frame(win)
+             framadatosabm=Frame(self.win)
              Label(framadatosabm, text='Nombre').grid(row=0,column=0)
              Label(framadatosabm, text='Apellido').grid(row=0,column=1)
              Label(framadatosabm, text='Dni').grid(row=0,column=2)
@@ -123,10 +136,10 @@ class ABMClientes:
              Label(framadatosabm, text='Direccion Url').grid(row=7,column=2)
              Label(framadatosabm, text='Combo Red Social').grid(row=7,column=3)
 
-             TextoNombre = Entry(framadatosabm)
-             TextoApellido = Entry(framadatosabm)
-             TextoDni = Entry(framadatosabm)
-             TextoTelefono = Entry(framadatosabm)
+             TextoNombre = Entry(framadatosabm,textvariable=nombre)
+             TextoApellido = Entry(framadatosabm,textvariable=apellido)
+             TextoDni = Entry(framadatosabm,textvariable=DNIcliente)
+             TextoTelefono = Entry(framadatosabm,textvariable=telefono)
 
              TxtoDireccion = Entry(framadatosabm,textvariable=direccion)
              Txtonumero = Entry(framadatosabm,textvariable=numero)
@@ -178,10 +191,11 @@ class ABMClientes:
              self.cursor.cursor.close()
 
              framadatosabm.grid(row=0,column=1)
-             framadatosabm.pack()
-             framadatosabm.mainloop
+             framadatosabm.config(bd=25)
+             framadatosabm.pack(fill=BOTH,expand=False,pady=20,padx=20)
+             #framadatosabm.mainloop
          
 
              EditarCliente(self.idcliente)
-             #vent = Ventana(win)
+             #vent = Ventana(self.win)
              #vent.pack(fill=BOTH, expand=YES)

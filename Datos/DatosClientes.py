@@ -3,17 +3,29 @@ from Datos.DatosDireccion import DatosDireccion as Direccion
 
 
 class DatosClientes():
-    def __init__(self,nombre,apellido,DNI,Idemail,Iddireccion,IdURL,IdGenero,Habilitado=0):
+    def __init__(self,nombre,apellido,DNI,Idemail,Idireccion,IdURL,IdGenero,telefono,Habilitado=0):
         self.nombre=nombre
         self.apellido=apellido
         self.DNI=DNI
         self.Idemail=Idemail
-        self.Iddireccion=Iddireccion
+        self.Iddireccion=Idireccion
         self.IdURL=IdURL
         self.Idgenero=IdGenero
         self.Habilitado=Habilitado
+        self.telefono=telefono
         self.cursor=Cursor()
-
+    def MetodoAccion(self,Accion):
+        Existe=self.cursor.Query(f"select idCliente from clientes where Nombre='{self.nombre}' and Apellido='{self.apellido}'and Dni={self.DNI}")
+        if Existe is not None:
+                    return "Usuario ya existe"
+        if Accion==True:
+          query=f"INSERT INTO wisemendb_saller.clientes(Nombre,Apellido,Dni,idEmail,idURL,telefono,idGenero,Habilitado,idDireccion)VALUES ('{self.nombre}','{self.apellido}',{self.DNI},{self.Idemail},{self.IdURL},{self.telefono},'{self.Idgenero}','{0}',{self.Iddireccion});"
+          result=self.cursor.insertar(query)
+          self.cursor.connectio.close()
+          self.cursor.cursor.close()
+          return result
+        else:
+            print("Es falso asi que va a editar")
 
 
 
