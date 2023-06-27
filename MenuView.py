@@ -23,7 +23,7 @@ class CrearMenu():
              win.config(menu=menubar)
 
              filemenu = Menu(menubar, tearoff=0)
-             filemenu.add_command(label="Clientes",command=lambda:Clientesvi.funcion())
+             filemenu.add_command(label="Clientes",command=lambda:Clientesvi())
              filemenu.add_command(label="Abrir")
              filemenu.add_command(label="Guardar")
              filemenu.add_command(label="Cerrar")
