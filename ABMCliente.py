@@ -189,6 +189,7 @@ class ABMClientes:
              #combo.place(x=150, y=150)
              self.cursor.connectio.close()
              self.cursor.cursor.close()
+             #prueba de  repositorio
 
              framadatosabm.grid(row=0,column=1)
              framadatosabm.config(bd=25)
