@@ -30,12 +30,19 @@ class ClienteView():
    
     queryLoad="SELECT Idcliente,Nombre,Apellido,Dni,Telefono,Ge.texto,Em.email,Dire.direccion,Dire.CP,Pro.texto as Provincia,Loca.texto as Localidad,Habilitado FROM wisemendb_saller.clientes as CLi inner join genero  as Ge on CLi.idGenero=Ge.id inner join email as Em on CLi.idEmail=Em.idemail inner join direccion as Dire on CLi.idDireccion=Dire.idDireccion inner join provinciaswise as Pro on Dire.idProvincia=Pro.id inner join localidadeswise as Loca on Dire.idLocalidad=Loca.id ;"
     def funcion(self):
+            global idCliente
+            global Dni
+            global Email
+            global Clientehabilitado
+            idCliente=IntVar()
+            Dni=StringVar()
+            Email=StringVar()
+            Clientehabilitado=StringVar()
 
 
 
             menubar = Menu(self.win)
             self.win.config(menu=menubar)
-            selectitem=StringVar()
             label=Label(self.win)#image=imagen#)
             label.pack(anchor="center")
             label.config(fg="#217434", bg="#518CAD",font=("Comic Sans MS",24,"bold"),text="pantalla Cliente")
@@ -45,8 +52,12 @@ class ClienteView():
                 selectitem=tree.item(item)#['text']
                 id=int(selectitem['text'])
                 client=f"{selectitem['values'][1]}-{selectitem['values'][2]}"
-                ABMClientes(client,id)
-                print(selectitem)
+                idCliente.set(int(selectitem['text']))
+                Dni.set(selectitem['values'][3])
+                Email.set(selectitem['values'][6])
+                Clientehabilitado.set()
+                #ABMClientes(client,id)
+                #print(selectitem)
            
             frame=Frame(self.win)
             filemenu = Menu(menubar, tearoff=0)
@@ -89,12 +100,18 @@ class ClienteView():
             frame.config(width="900", height="150")
             frame.pack(expand=1)
             Button(frameboton,text="Nuevo Cliente").grid(row=1,column=0)
-            Label(frameboton, text='     ',background="#958235").grid(row=1,column=1)
-            Button(frameboton,text="Editar Cliente").grid(row=1,column=2)
-            Label(frameboton, text='     ',background="#958235").grid(row=1,column=3)
-            Button(frameboton,text="Eliminar Cliente").grid(row=1,column=4)
-            Label(frameboton, text='     ',background="#958235").grid(row=1,column=5)
-            Button(frameboton,text="Seleccionar Cliente",command=Seleccion).grid(row=1,column=6)
+            Button(frameboton,text="Editar Cliente").grid(row=1,column=1)
+            Button(frameboton,text="Eliminar Cliente").grid(row=1,column=2)
+            Button(frameboton,text="Seleccionar Cliente",command=Seleccion).grid(row=1,column=3)
+            Label(frameboton,text='Id Cliete',background="#958235").grid(row=2,column=0)
+            Label(frameboton,text='DNI Cliete',background="#958235").grid(row=2,column=1)
+            Label(frameboton,text='Email',background="#958235").grid(row=2,column=2)
+            Label(frameboton,text='Habilitado',background="#958235").grid(row=2,column=3)
+            Entry(frameboton ,textvariable=idCliente).grid(row=3,column=0)
+            Entry(frameboton,textvariable=Dni).grid(row=3,column=1)
+            Entry(frameboton,textvariable=Email).grid(row=3,column=2)
+            Entry(frameboton,textvariable=Clientehabilitado).grid(row=3,column=3)
+
             frameboton.config(bg="#958235")
             frameboton.config(relief="sunken")
             frameboton.config(width="500", height="50")
