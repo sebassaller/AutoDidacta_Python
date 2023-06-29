@@ -40,8 +40,7 @@ class LoginView(Frame):
                 root.withdraw()
             else:
                 MensajeBox.showerror("Error","Usuario no registrado")
-            login.connectio.close()
-            login.cursor.close()
+            login.CloseCursor()
         
                 
 

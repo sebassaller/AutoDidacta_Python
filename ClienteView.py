@@ -55,11 +55,26 @@ class ClienteView():
                 idCliente.set(int(selectitem['text']))
                 Dni.set(selectitem['values'][3])
                 Email.set(selectitem['values'][6])
-                Clientehabilitado.set()
-                #ABMClientes(client,id)
-                #print(selectitem)
-           
-            frame=Frame(self.win)
+                Clientehabilitado.set(selectitem['values'][11])
+                if selectitem['values'][11]=="habilitado":
+                   Entry(frameboton,background="green").grid(row=3,column=3)
+                else:
+                    Entry(frameboton,background="red").grid(row=3,column=3)
+
+            def EliminarCliente():
+                valor=MensajeBox.askyesno(message="¿Desea eliminar el cliente?",title="Eliminar Cliente")
+                if valor==True:
+                    if idCliente.get()==0:
+                      return  MensajeBox.showerror(message="Debe Seleccionar un cliente para continuar",title="Error")
+                    else:
+                        cursor=Cursor()
+                        e=cursor.insertar(f"DELETE FROM `wisemendb_saller`.`clientes` WHERE (`Idcliente` = '{idCliente.get()}');")
+                        print(e)
+                        self.win.withdraw()
+                        ClienteView()
+                
+
+               
             filemenu = Menu(menubar, tearoff=0)
             filemenu.add_command(label="Nuevo Cliente")
             filemenu.add_command(label="Editar cliente")
@@ -67,25 +82,26 @@ class ClienteView():
             filemenu.add_command(label="Cerrar")
             filemenu.add_separator()
             filemenu.add_command(label="Salir", command=self.win.quit)
-            tabla=LoadClientes(queryLoad,True)
+            
+            frame=Frame(self.win)
+            
             s = ttk.Style()
             s.theme_use('clam')
             colubnas=("IdCliente", "Nombre", "Apellido", "DNI","Telefono","Genero","Email","Direccion","CP","Provincia","Localidad","Habilitado")
             tree = ttk.Treeview(frame, column=colubnas, show='headings', height=5,selectmode='browse')
-           
             contador=0
-            for item in list(colubnas):
-                print(item,item.index)
-                tree.column(f'#{str(contador)}',width=90, anchor=CENTER)
-                tree.heading(str(contador), text=str(item),anchor=CENTER)
-                contador +=1
             def habilitado(a):
                 if a==1:
                     return  "habilitado"
                 else: 
                     return("Desafectado")
+            for item in list(colubnas):
+                print(item,item.index)
+                tree.column(f'#{str(contador)}',width=90, anchor=CENTER)
+                tree.heading(str(contador), text=str(item),anchor=CENTER)
+                contador +=1
+            tabla=LoadClientes(queryLoad,True)
             for items in tabla:
-                print(items)
                 tree.insert('', 'end', text=str(items[00]), values=(str(items[00]),str(items[1]),str(items[2]),str(items[3]),str(items[4]),str(items[5]),str(items[6]),str(items[7]),str(items[8]),str(items[9]),str(items[10]),habilitado(int(items[11]))))
             
             scrollbar=Scrollbar(frame,orient="vertical", command=tree.yview)
@@ -98,11 +114,12 @@ class ClienteView():
             tree.pack()
             frame.config(pady=10)
             frame.config(width="900", height="150")
-            frame.pack(expand=1)
-            Button(frameboton,text="Nuevo Cliente").grid(row=1,column=0)
-            Button(frameboton,text="Editar Cliente").grid(row=1,column=1)
-            Button(frameboton,text="Eliminar Cliente").grid(row=1,column=2)
-            Button(frameboton,text="Seleccionar Cliente",command=Seleccion).grid(row=1,column=3)
+            frame.pack(expand=1)             
+
+            Button(frameboton,text="Nuevo Cliente",bg="#3BC2CD",fg="white",command=lambda:ABMClientes("Nuevo Cliente",0)).grid(row=1,column=0)
+            Button(frameboton,text="Editar Cliente",bg="#3BC2CD",fg="white").grid(row=1,column=1)
+            Button(frameboton,text="Eliminar Cliente",bg="#F0A448",fg="white",command=EliminarCliente).grid(row=1,column=2)
+            Button(frameboton,text="Seleccionar Cliente",command=Seleccion,bg="#289426",fg="white").grid(row=1,column=3)
             Label(frameboton,text='Id Cliete',background="#958235").grid(row=2,column=0)
             Label(frameboton,text='DNI Cliete',background="#958235").grid(row=2,column=1)
             Label(frameboton,text='Email',background="#958235").grid(row=2,column=2)

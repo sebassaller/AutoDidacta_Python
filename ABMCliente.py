@@ -6,6 +6,7 @@ from Datos.DatosCombos import SeachCombos as TraerIdCombos
 from Datos.DatosDireccion import DatosDireccion as Direccion
 from Datos.DatosEmail import DatosEmail as Email
 from Datos.DatosURL import DatosURL as URL
+from tkinter import messagebox as MensajeBox
 from tkinter import *
 
 
@@ -108,11 +109,13 @@ class ABMClientes:
                   emailarmado=email.get()+comboemail.get()
                   instanciaemail=Email(True,emailarmado,1)
                   resulemail=instanciaemail.MetodoAccion()
-
                   url=URL(textoURL.get(),combosid[2]['idRedsocial'][0])
                   idUrl=url.MetodoAccion(True)
                   cli=Cliente(nombre.get(),apellido.get(),DNIcliente.get(),resulemail,iddireccion,idUrl,combosid[1]['idgenero'][0],telefono.get())
-                  cli.MetodoAccion(True)
+                  result=cli.MetodoAccion(True)
+                  if result!=0:
+                     MensajeBox.showinfo(message="Cliente Guarda con exito",title="Grabado Exitoso")
+                     self.win.withdraw()
                
 
              framadatosabm=Frame(self.win)
@@ -185,7 +188,7 @@ class ABMClientes:
              comboredsocial.grid(row=8,column=3,sticky=W)
 
              Button(framadatosabm,text="Guardar",bg='SteelBlue1',command=locals()['EnviarDatosCliente']).grid(row=9,column=1)
-             Button(framadatosabm,text="Cancelar",bg='Khaki',command="" ).grid(row=9,column=2)
+             Button(framadatosabm,text="Cancelar",bg='Khaki',command=lambda:self.win.withdraw()).grid(row=9,column=2)
              #combo.place(x=150, y=150)
              self.cursor.connectio.close()
              self.cursor.cursor.close()
