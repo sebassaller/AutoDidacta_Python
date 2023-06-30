@@ -43,7 +43,7 @@ class SeachCombos:
       cursor=Cursor()
       lista=[item for (n,item) in list(cursor.Query(query,True))] 
       cursor.CloseCursor()
-      del cursor
+
       return lista 
 
 

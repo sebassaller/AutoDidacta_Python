@@ -3,6 +3,7 @@ from Datos.DatosDireccion import DatosDireccion as Direccion
 from Datos.DatosEmail import DatosEmail as Email
 from Datos.DatosURL import DatosURL as URL
 from Datos.DatosClientes import DatosClientes as Cliente
+from Datos.ConectorMysql   import Cursor
 class ControllerCliente:
 
     @staticmethod
@@ -56,6 +57,17 @@ class ControllerCliente:
         lista=Combos.TRaerCombosLista(query)
         del Combos
         return lista
+    
+
+    @staticmethod
+    def TraerCliente(id):
+         cursor=Cursor()
+         result=cursor.Query(f"SELECT * FROM wisemendb_saller.clientes as CLi inner join genero  as Ge on CLi.idGenero=Ge.id inner join email as Em on CLi.idEmail=Em.idemail inner join direccion as Dire on CLi.idDireccion=Dire.idDireccion inner join provinciaswise as Pro on Dire.idProvincia=Pro.id inner join localidadeswise as Loca on Dire.idLocalidad=Loca.id where Idcliente={id}")
+         cursor.CloseCursor()
+         del cursor
+         Lista={'idCliente':result[0],'nombre':result[1],'apellido':result[2],'DNI':result[3],'Telefono':result[6],'numero':result[17],'direccion':result[16]}
+
+         return Lista
 
 
 

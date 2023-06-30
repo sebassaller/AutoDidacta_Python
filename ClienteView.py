@@ -34,6 +34,8 @@ class ClienteView():
             global Dni
             global Email
             global Clientehabilitado
+            global nombreCliente
+            nombreCliente=StringVar()
             idCliente=IntVar()
             Dni=StringVar()
             Email=StringVar()
@@ -51,7 +53,7 @@ class ClienteView():
                 item=tree.selection()[0]
                 selectitem=tree.item(item)#['text']
                 id=int(selectitem['text'])
-                client=f"{selectitem['values'][1]}-{selectitem['values'][2]}"
+                nombreCliente.set(f"{selectitem['values'][1]}-{selectitem['values'][2]}")
                 idCliente.set(int(selectitem['text']))
                 Dni.set(selectitem['values'][3])
                 Email.set(selectitem['values'][6])
@@ -117,7 +119,7 @@ class ClienteView():
             frame.pack(expand=1)             
 
             Button(frameboton,text="Nuevo Cliente",bg="#3BC2CD",fg="white",command=lambda:ABMClientes("Nuevo Cliente",0)).grid(row=1,column=0)
-            Button(frameboton,text="Editar Cliente",bg="#3BC2CD",fg="white").grid(row=1,column=1)
+            Button(frameboton,text="Editar Cliente",bg="#3BC2CD",fg="white",command=lambda:ABMClientes(nombreCliente.get(),idCliente.get())).grid(row=1,column=1)
             Button(frameboton,text="Eliminar Cliente",bg="#F0A448",fg="white",command=EliminarCliente).grid(row=1,column=2)
             Button(frameboton,text="Seleccionar Cliente",command=Seleccion,bg="#289426",fg="white").grid(row=1,column=3)
             Label(frameboton,text='Id Cliete',background="#958235").grid(row=2,column=0)
