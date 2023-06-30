@@ -1,13 +1,9 @@
 from FrameMenu import VentanaRedimencionar as Ventana
 from tkinter import ttk
 from Datos.ConectorMysql   import Cursor
-from Datos.DatosClientes import DatosClientes as Cliente
-from Datos.DatosCombos import SeachCombos as TraerIdCombos
-from Datos.DatosDireccion import DatosDireccion as Direccion
-from Datos.DatosEmail import DatosEmail as Email
-from Datos.DatosURL import DatosURL as URL
 from tkinter import messagebox as MensajeBox
 from tkinter import *
+from Controller.ClienteController import ControllerCliente as controlCliente
 
 
 def EditarCliente(id):
@@ -16,16 +12,6 @@ def EditarCliente(id):
       cursor.connectio.close()
       cursor.cursor.close()
       print(result)
-
-
-def Idcombos(provincia,localidad,genero,redsocial):
-   IdCombos=TraerIdCombos()
-
-   idubicacion=IdCombos.ReturnIdProviniciaIdLocalidad(provincia,localidad)
-   idgenero=IdCombos.ReturnIDCombosGenero(genero)
-   idRedsocial=IdCombos.ReturnIdRedSocial(redsocial)
-   return (idubicacion,idgenero,idRedsocial)
-
 
 
 
@@ -41,6 +27,7 @@ class ABMClientes:
             self.win.config(relief="solid")
             self.win.config(background="#958235")
             self.funcion()
+            self.controlcliente=controlCliente()
 
 
       def funcion(self):
@@ -95,24 +82,21 @@ class ABMClientes:
          
              def TraerLocalidad():
                cura=Cursor()
-               idprovincia=[item for item in list(cura.Query(f"SELECT id FROM wisemendb_saller.provinciaswise where texto='{comboProvincias.get()}'"))]
-               Listalocalidad=[item for item in list(cura.Query(f"SELECT * FROM wisemendb_saller.localidadeswise where idprovincia={idprovincia[0]}",True))]
+               idprovincia=self.controlcliente.TraerListaCombo(f"SELECT id FROM wisemendb_saller.provinciaswise where texto='{comboProvincias.get()}'")
+               Listalocalidad=self.controlcliente.TraerListaCombo(f"SELECT * FROM wisemendb_saller.localidadeswise where idprovincia={idprovincia[0]}",True)
                comboLocalidad['values']=['']
                comboLocalidad['values']=[item[2] for item in list(Listalocalidad)]
                cura.connectio.close()
                cura.cursor.close()
 
              def EnviarDatosCliente():
-                  combosid= Idcombos(comboProvincias.get(),comboLocalidad.get(),combogenero.get(),comboredsocial.get())
-                  Direc=Direccion(True,direccion.get(),numero.get(),combosid[0]['idprovincia'][0],combosid[0]['idlocalidad'][0],CodigoPostal.get(),Piso.get())
-                  iddireccion=Direc.MetodoAccion()
-                  emailarmado=email.get()+comboemail.get()
-                  instanciaemail=Email(True,emailarmado,1)
-                  resulemail=instanciaemail.MetodoAccion()
-                  url=URL(textoURL.get(),combosid[2]['idRedsocial'][0])
-                  idUrl=url.MetodoAccion(True)
-                  cli=Cliente(nombre.get(),apellido.get(),DNIcliente.get(),resulemail,iddireccion,idUrl,combosid[1]['idgenero'][0],telefono.get())
-                  result=cli.MetodoAccion(True)
+                  combosid=self.controlcliente.TraerCombos(comboProvincias.get(),comboLocalidad.get(),combogenero.get(),comboredsocial.get())
+                  iddireccion=self.controlcliente.AgregarDireccionCliente(True,direccion.get(),numero.get(),combosid[0]['idprovincia'][0],combosid[0]['idlocalidad'][0],CodigoPostal.get(),Piso.get())
+                  resulemail=self.controlcliente.AgregarEmail(email.get(),comboemail.get())
+                  if resulemail==None:
+                     MensajeBox.showwarning(message="Email no ingresado",title="Email no ingresado")
+                  idUrl=self.controlcliente.AgregarUrl(textoURL.get(),combosid[2]['idRedsocial'][0])
+                  result=self.controlcliente.AgregarCliente(nombre.get(),apellido.get(),DNIcliente.get(),resulemail,iddireccion,idUrl,combosid[1]['idgenero'][0],telefono.get())
                   if result!=0:
                      MensajeBox.showinfo(message="Cliente Guarda con exito",title="Grabado Exitoso")
                      self.win.withdraw()
@@ -165,8 +149,8 @@ class ABMClientes:
              Txtopiso.grid(row=6,column=2)
              Textocp.grid(row=6,column=3)
              
-             listaProvincia=[item for (n,item) in list(self.cursor.Query("SELECT * FROM wisemendb_saller.provinciaswise",True))]
-             comboProvincias = ttk.Combobox(framadatosabm,values=listaProvincia,width=17)
+   
+             comboProvincias = ttk.Combobox(framadatosabm,values=self.controlcliente.TraerListaCombo("SELECT * FROM wisemendb_saller.provinciaswise"),width=17)
              comboProvincias.current(0)
              comboProvincias.grid(row=3,column=0,sticky=W)
              Button(framadatosabm,text="seleccionar Provincia",bg='gold',command=locals()['TraerLocalidad'] ).grid(row=4,column=0)
@@ -175,15 +159,15 @@ class ABMClientes:
              comboLocalidad.current(0)
              comboLocalidad.grid(row=3,column=1,sticky=W)
             
-             combogenero = ttk.Combobox(framadatosabm,values=[item for (n,item) in list(self.cursor.Query("SELECT * FROM wisemendb_saller.genero",True))],width=17)
+             combogenero = ttk.Combobox(framadatosabm,values=self.controlcliente.TraerListaCombo("SELECT * FROM wisemendb_saller.genero"),width=17)
              combogenero.current(0)
              combogenero.grid(row=3,column=2,sticky=W)
 
-             comboemail = ttk.Combobox(framadatosabm,values=[item for (n,item) in list(self.cursor.Query("SELECT * FROM wisemendb_saller.tiposdecorreos",True))],width=17)
+             comboemail = ttk.Combobox(framadatosabm,values=self.controlcliente.TraerListaCombo("SELECT * FROM wisemendb_saller.tiposdecorreos"),width=17)
              comboemail .current(0)
              comboemail .grid(row=8,column=1,sticky=W)
 
-             comboredsocial = ttk.Combobox(framadatosabm,values=[item for (n,item) in list(self.cursor.Query("SELECT *  FROM wisemendb_saller.redsocial",True))],width=17)
+             comboredsocial = ttk.Combobox(framadatosabm,values=self.controlcliente.TraerListaCombo("SELECT *  FROM wisemendb_saller.redsocial"),width=17)
              comboredsocial.current(0)
              comboredsocial.grid(row=8,column=3,sticky=W)
 

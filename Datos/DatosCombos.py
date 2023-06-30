@@ -16,6 +16,7 @@ class SeachCombos:
           query=f"SELECT id  FROM wisemendb_saller.genero where texto='{busqueda}'"
           idgenero=cursor.Query(query)
           cursor.CloseCursor()
+          del cursor
           return {'idgenero':idgenero}
 
 
@@ -25,7 +26,26 @@ class SeachCombos:
           query=f"SELECT id  FROM wisemendb_saller.redsocial where texto='{redsocial}';"
           idgenero=cursor.Query(query)
           cursor.CloseCursor()
+          del cursor
           return {'idRedsocial':idgenero}
+
+     
+    @staticmethod
+    def TraerListaCombo(query,valor=None):
+         cursor=Cursor()
+         lista= [item for item in list(cursor.Query(query,True))]   if valor is not None else [item for item in list(cursor.Query(query))] 
+         cursor.CloseCursor()
+         del cursor
+         return lista
+    
+    @staticmethod
+    def TRaerCombosLista(query):
+      cursor=Cursor()
+      lista=[item for (n,item) in list(cursor.Query(query,True))] 
+      cursor.CloseCursor()
+      del cursor
+      return lista 
+
 
 
 
