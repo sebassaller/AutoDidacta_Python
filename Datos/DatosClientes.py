@@ -14,7 +14,7 @@ class DatosClientes():
         self.Habilitado=Habilitado
         self.telefono=telefono
         self.cursor=Cursor()
-    def MetodoAccion(self,Accion):
+    def MetodoAccion(self,Accion,Idcliente=0):
         Existe=self.cursor.Query(f"select idCliente from clientes where Nombre='{self.nombre}' and Apellido='{self.apellido}'and Dni={self.DNI}")
         if Existe is not None:
                     return "Usuario ya existe"
@@ -25,7 +25,11 @@ class DatosClientes():
           self.cursor.cursor.close()
           return result
         else:
-            print("Es falso asi que va a editar")
+          query=f"update Clientes set Nombre='{self.nombre}',Apellido='{self.apellido}',Dni='{self.DNI}',Telefono={self.telefono},idGenero={self.Idgenero} where Idcliente={Idcliente};"
+          result=self.cursor.insertar(query)
+          self.cursor.connectio.close()
+          self.cursor.cursor.close()
+          return result
 
 
 

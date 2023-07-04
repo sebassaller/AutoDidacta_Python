@@ -5,7 +5,7 @@ class DatosURL:
         self.URL=URL
         self.IdResocial=IdRedsocial
         self.cursor=Cursor()
-    def MetodoAccion(self,Accion):
+    def MetodoAccion(self,Accion,idUrl=0):
         Existe=self.cursor.Query(f"SELECT  IdURLSocial FROM wisemendb_saller.direccionredsocial where URL='{self.URL}'")
         if Existe is not None:
                     return Existe[0]
@@ -16,4 +16,8 @@ class DatosURL:
           self.cursor.cursor.close()
           return result
         else:
-            print("Es falso asi que va a editar")
+          query=f"update  direccionredsocial set URl='{self.URL}',IdRedSocial={self.IdResocial} where IdURLSocial={idUrl}"
+          result=self.cursor.insertar(query)
+          self.cursor.connectio.close()
+          self.cursor.cursor.close()
+          return result

@@ -27,7 +27,7 @@ class SeachCombos:
           idgenero=cursor.Query(query)
           cursor.CloseCursor()
           del cursor
-          return {'idRedsocial':idgenero}
+          return {'idRedsocial':idgenero[0]}
 
      
     @staticmethod

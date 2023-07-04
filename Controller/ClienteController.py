@@ -14,15 +14,20 @@ class ControllerCliente:
          return result
 
     @staticmethod
-    def AgregarDireccionCliente(Accion,direccion,numero,idprovincia,idlocalidad,CP,piso,IdCliente=0):
-        if IdCliente==0:
-            Direc=Direccion(Accion,direccion,numero,idprovincia,idlocalidad,CP,piso)
+    def AgregarDireccionCliente(direccion,numero,idprovincia,idlocalidad,CP,piso):
+            Direc=Direccion(True,direccion,numero,idprovincia,idlocalidad,CP,piso)
             return Direc.MetodoAccion()
-        else:
-            query=f"SELECT idDireccion FROM wisemendb_saller.clientes where Idcliente={IdCliente}"
-            result= ControllerCliente._TraerCliente(query)
-            Direc=Direccion(False,direccion,numero,idprovincia,idlocalidad,CP,piso)
-            return Direc.MetodoAccion(result[0])
+
+           
+    
+
+    @staticmethod
+    def UpdateDireccionCliente(direccion,numero,idprovincia,idlocalidad,CP,piso,IdCliente):
+         query=f"SELECT idDireccion FROM wisemendb_saller.clientes where Idcliente={IdCliente}"
+         result= ControllerCliente._TraerCliente(query)
+         Direc=Direccion(False,direccion,numero,idprovincia,idlocalidad,CP,piso)
+         return Direc.MetodoAccion(result[0])
+
 
 
       
@@ -39,18 +44,26 @@ class ControllerCliente:
 
 
     @staticmethod
-    def AgregarEmail(email=None,comboemail=None,IdCliente=0):
+    def AgregarEmail(email=None,comboemail=None):
         emailarmado = email+comboemail if email !='' else None 
         if emailarmado==None:
             return None
-        if IdCliente==0:
-            instanciaemail=Email(True,emailarmado,1)
-            return instanciaemail.MetodoAccion()
-        else:
-            query=f"SELECT idEmail FROM wisemendb_saller.clientes where Idcliente={IdCliente}"
-            result= ControllerCliente._TraerCliente(query)
-            instanciaemail=Email(False,emailarmado,1)
-            return instanciaemail.MetodoAccion(result[0])
+        instanciaemail=Email(True,emailarmado,1)
+        return instanciaemail.MetodoAccion()
+
+            
+    
+
+    @staticmethod
+    def UpdateEmail(email,comboemail,IdCliente):
+        emailarmado = email+comboemail if email !='' else None 
+        if emailarmado==None:
+            return None
+        query=f"SELECT idEmail FROM wisemendb_saller.clientes where Idcliente={IdCliente}"
+        result= ControllerCliente._TraerCliente(query)
+        instanciaemail=Email(False,emailarmado,1)
+        return instanciaemail.MetodoAccion(result[0])
+
 
 
     @staticmethod
@@ -61,9 +74,27 @@ class ControllerCliente:
         return idUrl
 
     @staticmethod
+    def UpdateUrl(textoURL,idRedsocial,IdCliente):
+        query=f"SELECT idURL FROM wisemendb_saller.clientes where Idcliente={IdCliente}"
+        result= ControllerCliente._TraerCliente(query)
+        url=URL(textoURL,idRedsocial)
+        idUrl=url.MetodoAccion(False,result[0])
+        del url
+        return idUrl
+
+
+    @staticmethod
     def AgregarCliente(nombre,apellido,DNI,Idemail,Idireccion,IdURL,IdGenero,telefono):
         cli=Cliente(nombre,apellido,DNI,Idemail,Idireccion,IdURL,IdGenero,telefono,0)
         idcli=cli.MetodoAccion(True)
+        del cli
+        return idcli
+    
+
+    @staticmethod
+    def UpdateCliente(nombre,apellido,DNI,Idemail,Idireccion,IdURL,IdGenero,telefono,idcliente):
+        cli=Cliente(nombre,apellido,DNI,Idemail,Idireccion,IdURL,IdGenero,telefono,1)
+        idcli=cli.MetodoAccion(False,idcliente)
         del cli
         return idcli
 

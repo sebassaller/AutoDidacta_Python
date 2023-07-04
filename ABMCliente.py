@@ -51,18 +51,18 @@ class ABMClientes:
              CodigoPostal=IntVar()
              Piso=StringVar()
              controlcliente=controlCliente()
-             
-             cliente=controlcliente.TraerCliente(self.idcliente)
-             if cliente is not None:
-               nombre.set(cliente['nombre'])
-               apellido.set(cliente['apellido'])
-               DNIcliente.set(cliente['DNI'])
-               telefono.set(cliente['Telefono'])
-               numero.set(cliente['numero'])
-               direccion.set(cliente['direccion'])
-               textoURL.set(cliente['URLRedSocial'])
-               CodigoPostal.set(cliente['CP'])
-               email.set(cliente['Email'])
+             if self.idcliente !=0:
+               cliente=controlcliente.TraerCliente(self.idcliente)
+               if cliente is not None:
+                  nombre.set(cliente['nombre'])
+                  apellido.set(cliente['apellido'])
+                  DNIcliente.set(cliente['DNI'])
+                  telefono.set(cliente['Telefono'])
+                  numero.set(cliente['numero'])
+                  direccion.set(cliente['direccion'])
+                  textoURL.set(cliente['URLRedSocial'])
+                  CodigoPostal.set(cliente['CP'])
+                  email.set(cliente['Email'])
 
 
              menubar = Menu(self.win)
@@ -101,15 +101,23 @@ class ABMClientes:
 
              def EnviarDatosCliente():
                   combosid=controlcliente.TraerCombos(comboProvincias.get(),comboLocalidad.get(),combogenero.get(),comboredsocial.get())
-                  iddireccion=controlcliente.AgregarDireccionCliente(True,direccion.get(),numero.get(),combosid[0]['idprovincia'][0],combosid[0]['idlocalidad'][0],CodigoPostal.get(),Piso.get(),self.idcliente)
-                  resulemail=controlcliente.AgregarEmail(email.get(),comboemail.get())
-                  if resulemail==None:
-                     MensajeBox.showwarning(message="Email no ingresado",title="Email no ingresado")
-                  idUrl=controlcliente.AgregarUrl(textoURL.get(),combosid[2]['idRedsocial'][0])
-                  result=controlcliente.AgregarCliente(nombre.get(),apellido.get(),DNIcliente.get(),resulemail,iddireccion,idUrl,combosid[1]['idgenero'][0],telefono.get())
-                  if result!=0:
-                     MensajeBox.showinfo(message="Cliente Guarda con exito",title="Grabado Exitoso")
-                     self.win.withdraw()
+                  if self.idcliente==0:
+                     iddireccion=controlcliente.AgregarDireccionCliente(direccion.get(),numero.get(),combosid[0]['idprovincia'][0],combosid[0]['idlocalidad'][0],CodigoPostal.get(),Piso.get())
+                     resulemail=controlcliente.AgregarEmail(email.get(),comboemail.get())
+                     if resulemail==None:
+                        MensajeBox.showwarning(message="Email no ingresado",title="Email no ingresado")
+                     idUrl=controlcliente.AgregarUrl(textoURL.get(),combosid[2]['idRedsocial'])
+                     result=controlcliente.AgregarCliente(nombre.get(),apellido.get(),DNIcliente.get(),resulemail,iddireccion,idUrl,combosid[1]['idgenero'][0],telefono.get())
+                     if result!=0:
+                        MensajeBox.showinfo(message="Cliente Guarda con exito",title="Grabado Exitoso")
+                        self.win.withdraw()
+                  else:
+
+                     controlcliente.UpdateDireccionCliente(direccion.get(),numero.get(),combosid[0]['idprovincia'][0],combosid[0]['idlocalidad'][0],CodigoPostal.get(),Piso.get(),self.idcliente)
+                     controlcliente.UpdateEmail(email.get(),comboemail.get(),self.idcliente)
+                     controlcliente.UpdateUrl(textoURL.get(),combosid[2]['idRedsocial'],self.idcliente)
+                     controlcliente.UpdateCliente(nombre.get(),apellido.get(),DNIcliente.get(),'',0,0,combosid[1]['idgenero'][0],telefono.get(),self.idcliente)
+
                
 
              framadatosabm=Frame(self.win)
