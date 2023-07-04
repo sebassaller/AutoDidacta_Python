@@ -7,9 +7,25 @@ from Datos.ConectorMysql   import Cursor
 class ControllerCliente:
 
     @staticmethod
-    def AgregarDireccionCliente(Accion,direccion,numero,idprovincia,idlocalidad,CP,piso):
-        Direc=Direccion(Accion,direccion,numero,idprovincia,idlocalidad,CP,piso)
-        return Direc.MetodoAccion()
+    def _TraerCliente(query):
+         cursor=Cursor()
+         result=cursor.Query(query)
+         cursor.CloseCursor()
+         return result
+
+    @staticmethod
+    def AgregarDireccionCliente(Accion,direccion,numero,idprovincia,idlocalidad,CP,piso,IdCliente=0):
+        if IdCliente==0:
+            Direc=Direccion(Accion,direccion,numero,idprovincia,idlocalidad,CP,piso)
+            return Direc.MetodoAccion()
+        else:
+            query=f"SELECT idDireccion FROM wisemendb_saller.clientes where Idcliente={IdCliente}"
+            result= ControllerCliente._TraerCliente(query)
+            Direc=Direccion(False,direccion,numero,idprovincia,idlocalidad,CP,piso)
+            return Direc.MetodoAccion(result[0])
+
+
+      
 
 
     @staticmethod
@@ -23,12 +39,19 @@ class ControllerCliente:
 
 
     @staticmethod
-    def AgregarEmail(email=None,comboemail=None):
+    def AgregarEmail(email=None,comboemail=None,IdCliente=0):
         emailarmado = email+comboemail if email !='' else None 
         if emailarmado==None:
             return None
-        instanciaemail=Email(True,emailarmado,1)
-        return instanciaemail.MetodoAccion()
+        if IdCliente==0:
+            instanciaemail=Email(True,emailarmado,1)
+            return instanciaemail.MetodoAccion()
+        else:
+            query=f"SELECT idEmail FROM wisemendb_saller.clientes where Idcliente={IdCliente}"
+            result= ControllerCliente._TraerCliente(query)
+            instanciaemail=Email(False,emailarmado,1)
+            return instanciaemail.MetodoAccion(result[0])
+
 
     @staticmethod
     def AgregarUrl(textoURL,idRedsocial):
@@ -57,17 +80,38 @@ class ControllerCliente:
         lista=Combos.TRaerCombosLista(query)
         del Combos
         return lista
+
+    @staticmethod
+    def _ObtenerEmail(texto):
+        email=''
+        for (index,item) in enumerate(texto):
+            if item !='@':
+                email+=item
+            else:
+                return email
+
     
 
     @staticmethod
     def TraerCliente(id):
          cursor=Cursor()
-         result=cursor.Query(f"SELECT * FROM wisemendb_saller.clientes as CLi inner join genero  as Ge on CLi.idGenero=Ge.id inner join email as Em on CLi.idEmail=Em.idemail inner join direccion as Dire on CLi.idDireccion=Dire.idDireccion inner join provinciaswise as Pro on Dire.idProvincia=Pro.id inner join localidadeswise as Loca on Dire.idLocalidad=Loca.id where Idcliente={id}")
+         result=cursor.Query(f"SELECT * FROM wisemendb_saller.clientes as CLi inner join genero  as Ge on CLi.idGenero=Ge.id inner join email as Em on CLi.idEmail=Em.idemail inner join direccion as Dire on CLi.idDireccion=Dire.idDireccion inner join provinciaswise as Pro on Dire.idProvincia=Pro.id inner join localidadeswise as Loca on Dire.idLocalidad=Loca.id  inner join direccionredsocial as social on social.IdURLSocial= CLi.idURL where Idcliente={id}")
          cursor.CloseCursor()
+         email=ControllerCliente._ObtenerEmail(result[13])
          del cursor
-         Lista={'idCliente':result[0],'nombre':result[1],'apellido':result[2],'DNI':result[3],'Telefono':result[6],'numero':result[17],'direccion':result[16]}
-
+         Lista={'idCliente':result[0],'nombre':result[1],'apellido':result[2],'DNI':result[3],'Telefono':result[6],'numero':result[17],'direccion':result[16],'CP':result[20],'Email':email,'URLRedSocial':result[29]}
          return Lista
+    
+
+    
+
+
+
+
+    
+
+
+        
 
 
 

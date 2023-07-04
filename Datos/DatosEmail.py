@@ -6,7 +6,7 @@ class DatosEmail:
         self.Tipopersona=Tipopersona
         self.Accion=Accion
         self.cursor=Cursor()
-    def MetodoAccion(self):
+    def MetodoAccion(self,IdEmail=0):
         Existe=self.cursor.Query(f"select idemail from wisemendb_saller.email where email='{self.email}' and TipoPersona={self.Tipopersona}")
         if Existe is not None:
                     return Existe[0]
@@ -17,4 +17,8 @@ class DatosEmail:
           self.cursor.cursor.close()
           return result
         else:
-            print("Es falso asi que va a editar")
+          query=f"update email set email='{self.email}' where idemail={IdEmail}"
+          result=self.cursor.insertar(query)
+          self.cursor.connectio.close()
+          self.cursor.cursor.close()
+          return result

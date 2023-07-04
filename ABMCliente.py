@@ -60,6 +60,9 @@ class ABMClientes:
                telefono.set(cliente['Telefono'])
                numero.set(cliente['numero'])
                direccion.set(cliente['direccion'])
+               textoURL.set(cliente['URLRedSocial'])
+               CodigoPostal.set(cliente['CP'])
+               email.set(cliente['Email'])
 
 
              menubar = Menu(self.win)
@@ -98,7 +101,7 @@ class ABMClientes:
 
              def EnviarDatosCliente():
                   combosid=controlcliente.TraerCombos(comboProvincias.get(),comboLocalidad.get(),combogenero.get(),comboredsocial.get())
-                  iddireccion=controlcliente.AgregarDireccionCliente(True,direccion.get(),numero.get(),combosid[0]['idprovincia'][0],combosid[0]['idlocalidad'][0],CodigoPostal.get(),Piso.get())
+                  iddireccion=controlcliente.AgregarDireccionCliente(True,direccion.get(),numero.get(),combosid[0]['idprovincia'][0],combosid[0]['idlocalidad'][0],CodigoPostal.get(),Piso.get(),self.idcliente)
                   resulemail=controlcliente.AgregarEmail(email.get(),comboemail.get())
                   if resulemail==None:
                      MensajeBox.showwarning(message="Email no ingresado",title="Email no ingresado")

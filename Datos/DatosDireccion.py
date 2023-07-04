@@ -13,7 +13,7 @@ class DatosDireccion:
 
 
  
-    def MetodoAccion(self):
+    def MetodoAccion(self,Id=0):
             Existe=self.cursor.Query(f"SELECT idDireccion FROM wisemendb_saller.direccion  where idProvincia={self.idprovincia}  and idLocalidad={self.idlocalidad} and numero={self.numero} and direccion='{self.direccion}'")
             if Existe is not None:
                 return Existe[0]
@@ -25,7 +25,11 @@ class DatosDireccion:
                 self.cursor.cursor.close()
                 return result
             else:
-                print("Es falso asi que va a editar")
+                query=f"UPDATE direccion SET direccion='{self.direccion}' ,numero={self.numero}, idProvincia={self.idprovincia},idLocalidad={self.idlocalidad},CP={self.cp},piso='{self.piso}' WHERE idDireccion={Id}"
+                result=self.cursor.insertar(query)
+                self.cursor.connectio.close()
+                self.cursor.cursor.close()
+                return result
  
 
 
